@@ -20,21 +20,35 @@ let mockTweets = [
 ];
 
 class Main extends React.Component {
-    render() {
-        return (
-            <div className="container">
-                <TweetBox />
-                <TweetsList tweets={mockTweets} />
-            </div>
-        );
+  constructor (props) {
+    super (props);
+    this.state = {
+      tweetsList: mockTweets
     };
+  }
+
+  addTweet (tweet) {
+    let tl = this.state.tweetsList;
+    tl.unshift({id: Date.now(), name: 'Guest', body: tweet});
+
+    this.setState({ tweetsList: tl});
+
+  }
+
+  render() {
+      return (
+          <div className="container">
+              <TweetBox sendTweet={this.addTweet.bind(this)} />
+              <TweetsList tweets={this.state.tweetsList} />
+          </div>
+      );
+  };
 }
 
 let documentReady = () => {
-    ReactDOM.render(
-        <Main />,
-        document.getElementById('react')
-    );
+  if (document.getElementById('react')) {
+    ReactDOM.render(<Main />,document.getElementById('react'));
+  }
 };
 
 $(documentReady);
