@@ -16,12 +16,9 @@ class Main extends React.Component {
     this._onChange = this._onChange.bind(this);
   }
 
-  
+  // register with the store
   componentDidMount () {
     TweetStore.addChangeListener(this._onChange);
-    // $.ajax('/tweets')
-    //   .success(data => this.setState(this.formattedTweets(data)))
-    //   .error(error => console.log(error));
   }
 
   componentWillUnmount () {
@@ -33,22 +30,10 @@ class Main extends React.Component {
     this.setState(getAppState())
   }
 
-  addTweet (tweet) {
-
-    // $.post('/tweets', { body: tweet })
-    //   .success(savedTweet => {
-    //
-    //     let tl = this.state.tweetsList;
-    //     tl.unshift(savedTweet);
-    //     this.setState(this.formattedTweets(tl));
-    //   })
-    //   .error(error => console.log(error));
-  }
-
   render() {
       return (
           <div className="container">
-              <TweetBox sendTweet={this.addTweet.bind(this)} />
+              <TweetBox />
               <TweetsList tweets={this.state.tweetsList} />
           </div>
       );

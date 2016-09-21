@@ -1,5 +1,5 @@
-import AppDispatcher from '../dispatcher'
-import ActionTypes from '../constants'
+import AppDispatcher from '../dispatcher';
+import ActionTypes from '../constants';
 import { EventEmitter } from 'events';
 
 let _tweets = [];
@@ -35,6 +35,10 @@ AppDispatcher.register(action => {
     case ActionTypes.RECEIVED_TWEETS:
       // console.log(action);
       _tweets = action.rawTweets;
+      TweetStore.emitChange();
+    break;
+    case ActionTypes.RECEIVED_ONE_TWEET:
+      _tweets.unshift(action.tweet);
       TweetStore.emitChange();
     break;
     default:

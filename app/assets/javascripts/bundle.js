@@ -55,15 +55,15 @@
 	
 	var _TweetBox2 = _interopRequireDefault(_TweetBox);
 	
-	var _TweetsList = __webpack_require__(/*! ./components/TweetsList */ 2);
+	var _TweetsList = __webpack_require__(/*! ./components/TweetsList */ 3);
 	
 	var _TweetsList2 = _interopRequireDefault(_TweetsList);
 	
-	var _TweetActions = __webpack_require__(/*! ./actions/TweetActions */ 4);
+	var _TweetActions = __webpack_require__(/*! ./actions/TweetActions */ 2);
 	
 	var _TweetActions2 = _interopRequireDefault(_TweetActions);
 	
-	var _TweetStore = __webpack_require__(/*! ./stores/TweetStore */ 13);
+	var _TweetStore = __webpack_require__(/*! ./stores/TweetStore */ 5);
 	
 	var _TweetStore2 = _interopRequireDefault(_TweetStore);
 	
@@ -94,13 +94,13 @@
 	    return _this;
 	  }
 	
+	  // register with the store
+	
+	
 	  _createClass(Main, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      _TweetStore2.default.addChangeListener(this._onChange);
-	      // $.ajax('/tweets')
-	      //   .success(data => this.setState(this.formattedTweets(data)))
-	      //   .error(error => console.log(error));
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
@@ -116,25 +116,12 @@
 	      this.setState(getAppState());
 	    }
 	  }, {
-	    key: 'addTweet',
-	    value: function addTweet(tweet) {
-	
-	      // $.post('/tweets', { body: tweet })
-	      //   .success(savedTweet => {
-	      //
-	      //     let tl = this.state.tweetsList;
-	      //     tl.unshift(savedTweet);
-	      //     this.setState(this.formattedTweets(tl));
-	      //   })
-	      //   .error(error => console.log(error));
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return React.createElement(
 	        'div',
 	        { className: 'container' },
-	        React.createElement(_TweetBox2.default, { sendTweet: this.addTweet.bind(this) }),
+	        React.createElement(_TweetBox2.default, null),
 	        React.createElement(_TweetsList2.default, { tweets: this.state.tweetsList })
 	      );
 	    }
@@ -156,15 +143,21 @@
 /*!*****************************************************!*\
   !*** ./app/assets/frontend/components/TweetBox.jsx ***!
   \*****************************************************/
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _TweetActions = __webpack_require__(/*! ../actions/TweetActions */ 2);
+	
+	var _TweetActions2 = _interopRequireDefault(_TweetActions);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -182,34 +175,34 @@
 	  }
 	
 	  _createClass(TweetBox, [{
-	    key: "sendTweet",
+	    key: 'sendTweet',
 	    value: function sendTweet(event) {
 	      event.preventDefault();
-	      this.props.sendTweet(this.refs.tweetTextArea.value);
+	      _TweetActions2.default.sendTweet(this.refs.tweetTextArea.value);
 	      this.refs.tweetTextArea.value = '';
 	    }
 	  }, {
-	    key: "render",
+	    key: 'render',
 	    value: function render() {
 	      return React.createElement(
-	        "div",
-	        { className: "row" },
+	        'div',
+	        { className: 'row' },
 	        React.createElement(
-	          "form",
+	          'form',
 	          { onSubmit: this.sendTweet.bind(this) },
 	          React.createElement(
-	            "div",
-	            { className: "input-field col s12" },
-	            React.createElement("textarea", { ref: "tweetTextArea", className: "materialize-textarea" }),
+	            'div',
+	            { className: 'input-field col s12' },
+	            React.createElement('textarea', { ref: 'tweetTextArea', className: 'materialize-textarea' }),
 	            React.createElement(
-	              "label",
+	              'label',
 	              null,
-	              "What's happening?"
+	              'What\'s happening?'
 	            ),
 	            React.createElement(
-	              "button",
-	              { type: "submit", className: "btn right" },
-	              "Tweets"
+	              'button',
+	              { type: 'submit', className: 'btn right' },
+	              'Tweets'
 	            )
 	          )
 	        )
@@ -224,6 +217,34 @@
 
 /***/ },
 /* 2 */
+/*!******************************************************!*\
+  !*** ./app/assets/frontend/actions/TweetActions.jsx ***!
+  \******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _API = __webpack_require__(/*! ../API */ 13);
+	
+	var _API2 = _interopRequireDefault(_API);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  getAllTweets: function getAllTweets() {
+	    _API2.default.getAllTweets();
+	  },
+	  sendTweet: function sendTweet(body) {
+	    _API2.default.createTweet(body);
+	  }
+	};
+
+/***/ },
+/* 3 */
 /*!*******************************************************!*\
   !*** ./app/assets/frontend/components/TweetsList.jsx ***!
   \*******************************************************/
@@ -239,7 +260,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _Tweet = __webpack_require__(/*! ./Tweet */ 3);
+	var _Tweet = __webpack_require__(/*! ./Tweet */ 4);
 	
 	var _Tweet2 = _interopRequireDefault(_Tweet);
 	
@@ -284,7 +305,7 @@
 	exports.default = TweetsList;
 
 /***/ },
-/* 3 */
+/* 4 */
 /*!**************************************************!*\
   !*** ./app/assets/frontend/components/Tweet.jsx ***!
   \**************************************************/
@@ -345,35 +366,10 @@
 	exports.default = Tweet;
 
 /***/ },
-/* 4 */
-/*!******************************************************!*\
-  !*** ./app/assets/frontend/actions/TweetActions.jsx ***!
-  \******************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _API = __webpack_require__(/*! ../API */ 5);
-	
-	var _API2 = _interopRequireDefault(_API);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  getAllTweets: function getAllTweets() {
-	    _API2.default.getAllTweets();
-	  }
-	};
-
-/***/ },
 /* 5 */
-/*!*************************************!*\
-  !*** ./app/assets/frontend/API.jsx ***!
-  \*************************************/
+/*!***************************************************!*\
+  !*** ./app/assets/frontend/stores/TweetStore.jsx ***!
+  \***************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -382,56 +378,87 @@
 	  value: true
 	});
 	
-	var _ServerActions = __webpack_require__(/*! ./actions/ServerActions */ 6);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _ServerActions2 = _interopRequireDefault(_ServerActions);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  getAllTweets: function getAllTweets() {
-	    $.get('/tweets').success(function (rawTweets) {
-	      return _ServerActions2.default.receivedTweets(rawTweets);
-	    }).error(function (error) {
-	      return console.log(error);
-	    });
-	  }
-	};
-
-/***/ },
-/* 6 */
-/*!*******************************************************!*\
-  !*** ./app/assets/frontend/actions/ServerActions.jsx ***!
-  \*******************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _dispatcher = __webpack_require__(/*! ../dispatcher */ 7);
+	var _dispatcher = __webpack_require__(/*! ../dispatcher */ 6);
 	
 	var _dispatcher2 = _interopRequireDefault(_dispatcher);
 	
-	var _constants = __webpack_require__(/*! ../constants */ 12);
+	var _constants = __webpack_require__(/*! ../constants */ 11);
 	
 	var _constants2 = _interopRequireDefault(_constants);
 	
+	var _events = __webpack_require__(/*! events */ 12);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = {
-	  receivedTweets: function receivedTweets(rawTweets) {
-	    _dispatcher2.default.dispatch({
-	      actionType: _constants2.default.RECEIVED_TWEETS,
-	      rawTweets: rawTweets
-	    });
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _tweets = [];
+	var CHANGE_EVENT = "CHANGE";
+	
+	var TweetEventEmitter = function (_EventEmitter) {
+	  _inherits(TweetEventEmitter, _EventEmitter);
+	
+	  function TweetEventEmitter() {
+	    _classCallCheck(this, TweetEventEmitter);
+	
+	    return _possibleConstructorReturn(this, (TweetEventEmitter.__proto__ || Object.getPrototypeOf(TweetEventEmitter)).apply(this, arguments));
 	  }
-	};
+	
+	  _createClass(TweetEventEmitter, [{
+	    key: 'getAll',
+	    value: function getAll() {
+	      return _tweets.map(function (tweet) {
+	        tweet.formattedDate = moment(tweet.created_at).fromNow();
+	        return tweet;
+	      });
+	    }
+	  }, {
+	    key: 'emitChange',
+	    value: function emitChange() {
+	      this.emit(CHANGE_EVENT);
+	    }
+	  }, {
+	    key: 'addChangeListener',
+	    value: function addChangeListener(callback) {
+	      this.on(CHANGE_EVENT, callback);
+	    }
+	  }, {
+	    key: 'removeChangeListener',
+	    value: function removeChangeListener(callback) {
+	      this.removeListener(CHANGE_EVENT, callback);
+	    }
+	  }]);
+	
+	  return TweetEventEmitter;
+	}(_events.EventEmitter);
+	
+	var TweetStore = new TweetEventEmitter();
+	
+	_dispatcher2.default.register(function (action) {
+	  switch (action.actionType) {
+	    case _constants2.default.RECEIVED_TWEETS:
+	      // console.log(action);
+	      _tweets = action.rawTweets;
+	      TweetStore.emitChange();
+	      break;
+	    case _constants2.default.RECEIVED_ONE_TWEET:
+	      _tweets.unshift(action.tweet);
+	      TweetStore.emitChange();
+	      break;
+	    default:
+	  }
+	});
+	
+	exports.default = TweetStore;
 
 /***/ },
-/* 7 */
+/* 6 */
 /*!********************************************!*\
   !*** ./app/assets/frontend/dispatcher.jsx ***!
   \********************************************/
@@ -443,7 +470,7 @@
 	  value: true
 	});
 	
-	var _flux = __webpack_require__(/*! flux */ 8);
+	var _flux = __webpack_require__(/*! flux */ 7);
 	
 	var _flux2 = _interopRequireDefault(_flux);
 	
@@ -452,7 +479,7 @@
 	exports.default = new _flux2.default.Dispatcher();
 
 /***/ },
-/* 8 */
+/* 7 */
 /*!*************************!*\
   !*** ./~/flux/index.js ***!
   \*************************/
@@ -467,11 +494,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Dispatcher = __webpack_require__(/*! ./lib/Dispatcher */ 9);
+	module.exports.Dispatcher = __webpack_require__(/*! ./lib/Dispatcher */ 8);
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /*!**********************************!*\
   !*** ./~/flux/lib/Dispatcher.js ***!
   \**********************************/
@@ -496,7 +523,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 11);
+	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 10);
 	
 	var _prefix = 'ID_';
 	
@@ -708,10 +735,10 @@
 	})();
 	
 	module.exports = Dispatcher;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! C:/Research/reactwitter/~/process/browser.js */ 10)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! C:/Research/reactwitter/~/process/browser.js */ 9)))
 
 /***/ },
-/* 10 */
+/* 9 */
 /*!****************************************************!*\
   !*** C:/Research/reactwitter/~/process/browser.js ***!
   \****************************************************/
@@ -900,7 +927,7 @@
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /*!****************************************!*\
   !*** ./~/flux/~/fbjs/lib/invariant.js ***!
   \****************************************/
@@ -955,10 +982,10 @@
 	};
 	
 	module.exports = invariant;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! C:/Research/reactwitter/~/process/browser.js */ 10)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! C:/Research/reactwitter/~/process/browser.js */ 9)))
 
 /***/ },
-/* 12 */
+/* 11 */
 /*!*******************************************!*\
   !*** ./app/assets/frontend/constants.jsx ***!
   \*******************************************/
@@ -970,99 +997,12 @@
 	  value: true
 	});
 	exports.default = {
-	  RECEIVED_TWEETS: 'RECEIVED_TWEETS'
+	  RECEIVED_TWEETS: 'RECEIVED_TWEETS',
+	  RECEIVED_ONE_TWEET: 'RECEIVED_ONE_TWEET'
 	};
 
 /***/ },
-/* 13 */
-/*!***************************************************!*\
-  !*** ./app/assets/frontend/stores/TweetStore.jsx ***!
-  \***************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _dispatcher = __webpack_require__(/*! ../dispatcher */ 7);
-	
-	var _dispatcher2 = _interopRequireDefault(_dispatcher);
-	
-	var _constants = __webpack_require__(/*! ../constants */ 12);
-	
-	var _constants2 = _interopRequireDefault(_constants);
-	
-	var _events = __webpack_require__(/*! events */ 14);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _tweets = [];
-	var CHANGE_EVENT = "CHANGE";
-	
-	var TweetEventEmitter = function (_EventEmitter) {
-	  _inherits(TweetEventEmitter, _EventEmitter);
-	
-	  function TweetEventEmitter() {
-	    _classCallCheck(this, TweetEventEmitter);
-	
-	    return _possibleConstructorReturn(this, (TweetEventEmitter.__proto__ || Object.getPrototypeOf(TweetEventEmitter)).apply(this, arguments));
-	  }
-	
-	  _createClass(TweetEventEmitter, [{
-	    key: 'getAll',
-	    value: function getAll() {
-	      return _tweets.map(function (tweet) {
-	        tweet.formattedDate = moment(tweet.created_at).fromNow();
-	        return tweet;
-	      });
-	    }
-	  }, {
-	    key: 'emitChange',
-	    value: function emitChange() {
-	      this.emit(CHANGE_EVENT);
-	    }
-	  }, {
-	    key: 'addChangeListener',
-	    value: function addChangeListener(callback) {
-	      this.on(CHANGE_EVENT, callback);
-	    }
-	  }, {
-	    key: 'removeChangeListener',
-	    value: function removeChangeListener(callback) {
-	      this.removeListener(CHANGE_EVENT, callback);
-	    }
-	  }]);
-	
-	  return TweetEventEmitter;
-	}(_events.EventEmitter);
-	
-	var TweetStore = new TweetEventEmitter();
-	
-	_dispatcher2.default.register(function (action) {
-	  switch (action.actionType) {
-	    case _constants2.default.RECEIVED_TWEETS:
-	      // console.log(action);
-	      _tweets = action.rawTweets;
-	      TweetStore.emitChange();
-	      break;
-	    default:
-	  }
-	});
-	
-	exports.default = TweetStore;
-
-/***/ },
-/* 14 */
+/* 12 */
 /*!****************************!*\
   !*** ./~/events/events.js ***!
   \****************************/
@@ -1371,6 +1311,80 @@
 	  return arg === void 0;
 	}
 
+
+/***/ },
+/* 13 */
+/*!*************************************!*\
+  !*** ./app/assets/frontend/API.jsx ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _ServerActions = __webpack_require__(/*! ./actions/ServerActions */ 14);
+	
+	var _ServerActions2 = _interopRequireDefault(_ServerActions);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  getAllTweets: function getAllTweets() {
+	    $.get('/tweets').success(function (rawTweets) {
+	      return _ServerActions2.default.receivedTweets(rawTweets);
+	    }).error(function (error) {
+	      return console.log(error);
+	    });
+	  },
+	  createTweet: function createTweet(body) {
+	    $.post('/tweets', { body: body }).success(function (t) {
+	      return _ServerActions2.default.receivedOneTweet(t);
+	    }).error(function (error) {
+	      return console.log(error);
+	    });
+	  }
+	};
+
+/***/ },
+/* 14 */
+/*!*******************************************************!*\
+  !*** ./app/assets/frontend/actions/ServerActions.jsx ***!
+  \*******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _dispatcher = __webpack_require__(/*! ../dispatcher */ 6);
+	
+	var _dispatcher2 = _interopRequireDefault(_dispatcher);
+	
+	var _constants = __webpack_require__(/*! ../constants */ 11);
+	
+	var _constants2 = _interopRequireDefault(_constants);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  receivedTweets: function receivedTweets(rawTweets) {
+	    _dispatcher2.default.dispatch({
+	      actionType: _constants2.default.RECEIVED_TWEETS,
+	      rawTweets: rawTweets
+	    });
+	  },
+	  receivedOneTweet: function receivedOneTweet(t) {
+	    _dispatcher2.default.dispatch({
+	      actionType: _constants2.default.RECEIVED_ONE_TWEET,
+	      tweet: t
+	    });
+	  }
+	};
 
 /***/ }
 /******/ ]);
