@@ -1,38 +1,29 @@
 import TweetBox from './components/TweetBox';
 import TweetsList from './components/TweetsList';
 
-let mockTweets = [
-  {
-    id: 1,
-    name: 'si kerr',
-    body: 'tweet body 1'
-  },
-  {
-    id: 2,
-    name: 'pete kerr',
-    body: 'tweet body 2'
-  },
-  {
-    id: 3,
-    name: 'tom kerr',
-    body: 'tweet body 3'
-  }
-];
-
 class Main extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
-      tweetsList: mockTweets
+      tweetsList: []
     };
   }
 
+  componentDidMount () {
+    $.ajax('/tweets')
+      .success(data => this.setState({ tweetsList: data }))
+      .error(error => console.log(error));
+  }
+
   addTweet (tweet) {
-    let tl = this.state.tweetsList;
-    tl.unshift({id: Date.now(), name: 'Guest', body: tweet});
 
-    this.setState({ tweetsList: tl});
-
+    $.post('/tweets', { body: tweet })
+      .success(savedTweet => {
+        let tl = this.state.tweetsList;
+        tl.unshift(savedTweet);
+        this.setState({ tweetsList: tl});
+      })
+      .error(error => console.log(error));
   }
 
   render() {
@@ -47,7 +38,7 @@ class Main extends React.Component {
 
 let documentReady = () => {
   if (document.getElementById('react')) {
-    ReactDOM.render(<Main />,document.getElementById('react'));
+    ReactDOM.render(<Main />, document.getElementById('react'));
   }
 };
 

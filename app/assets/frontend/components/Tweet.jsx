@@ -5,6 +5,7 @@ export default class Tweet extends React.Component {
         <i className="material-icons circle">person_pin</i>
         <span className="title">{this.props.name}</span>
         <p>{this.props.body}</p>
+        <p>{this.props.updated_at}</p>
       </li>
     );
   };

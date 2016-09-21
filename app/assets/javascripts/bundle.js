@@ -67,20 +67,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var mockTweets = [{
-	  id: 1,
-	  name: 'si kerr',
-	  body: 'tweet body 1'
-	}, {
-	  id: 2,
-	  name: 'pete kerr',
-	  body: 'tweet body 2'
-	}, {
-	  id: 3,
-	  name: 'tom kerr',
-	  body: 'tweet body 3'
-	}];
-	
 	var Main = function (_React$Component) {
 	  _inherits(Main, _React$Component);
 	
@@ -90,18 +76,34 @@
 	    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
 	
 	    _this.state = {
-	      tweetsList: mockTweets
+	      tweetsList: []
 	    };
 	    return _this;
 	  }
 	
 	  _createClass(Main, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+	
+	      $.ajax('/tweets').success(function (data) {
+	        return _this2.setState({ tweetsList: data });
+	      }).error(function (error) {
+	        return console.log(error);
+	      });
+	    }
+	  }, {
 	    key: 'addTweet',
 	    value: function addTweet(tweet) {
-	      var tl = this.state.tweetsList;
-	      tl.unshift({ id: Date.now(), name: 'Guest', body: tweet });
+	      var _this3 = this;
 	
-	      this.setState({ tweetsList: tl });
+	      $.post('/tweets', { body: tweet }).success(function (savedTweet) {
+	        var tl = _this3.state.tweetsList;
+	        tl.unshift(savedTweet);
+	        _this3.setState({ tweetsList: tl });
+	      }).error(function (error) {
+	        return console.log(error);
+	      });
 	    }
 	  }, {
 	    key: 'render',
@@ -119,7 +121,9 @@
 	}(React.Component);
 	
 	var documentReady = function documentReady() {
-	  ReactDOM.render(React.createElement(Main, null), document.getElementById('react'));
+	  if (document.getElementById('react')) {
+	    ReactDOM.render(React.createElement(Main, null), document.getElementById('react'));
+	  }
 	};
 	
 	$(documentReady);
@@ -306,6 +310,11 @@
 	          "p",
 	          null,
 	          this.props.body
+	        ),
+	        React.createElement(
+	          "p",
+	          null,
+	          this.props.updated_at
 	        )
 	      );
 	    }
