@@ -1,11 +1,11 @@
 import API from '../API';
 
 export default {
-  getAllTweets () {
-    API.getAllTweets();
-  },
+    getAllTweets() {
+        API.getAllTweets();
+    },
 
-  sendTweet (body) {
-    API.createTweet(body);
-  }
+    sendTweet(body) {
+        API.createTweet(body);
+    }
 }

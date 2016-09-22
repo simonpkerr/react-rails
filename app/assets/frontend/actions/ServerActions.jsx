@@ -14,5 +14,22 @@ export default {
       actionType: ActionTypes.RECEIVED_ONE_TWEET,
       tweet: t
     });
+  },
+
+  receivedUsers(users) {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.RECEIVED_USERS,
+      users
+    });
+  },
+
+  receivedOneFollower (follower) {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.RECEIVED_ONE_FOLLOWER,
+      follower
+    })
   }
+
+
+
 }

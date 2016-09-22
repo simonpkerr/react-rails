@@ -11,5 +11,17 @@ export default {
     $.post('/tweets', { body })
     .success(t => ServerActions.receivedOneTweet(t))
     .error(error => console.log(error));
+  },
+
+  getAllUsers () {
+    $.get('/followers')
+    .success(users => ServerActions.receivedUsers(users))
+    .error(error => console.log(error));
+  },
+
+  followUser (userId) {
+    $.post('/followers', { user_id: userId })
+    .success(follower => ServerActions.receivedOneFollower(follower))
+    .error(error => console.log(error));
   }
 }
