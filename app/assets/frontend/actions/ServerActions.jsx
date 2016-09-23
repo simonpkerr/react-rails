@@ -27,7 +27,14 @@ export default {
     AppDispatcher.dispatch({
       actionType: ActionTypes.RECEIVED_ONE_FOLLOWER,
       follower
-    })
+    });
+  },
+
+  unfollowed (userId) {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.REMOVED_ONE_FOLLOWER,
+      user_id: userId
+    });
   }
 
 

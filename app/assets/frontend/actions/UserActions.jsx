@@ -6,6 +6,9 @@ export default {
   },
   followUser(userId){
     API.followUser(userId);
+  },
+  unfollowUser(userId){
+    API.unfollowUser(userId);
   }
 
 }

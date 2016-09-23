@@ -1,6 +1,7 @@
 import AppDispatcher from '../dispatcher';
 import ActionTypes from '../constants';
 import AppEventEmitter from './AppEventEmitter';
+import TweetStore from './TweetStore';
 
 let _users = [];
 let _followedIds = [];
@@ -26,6 +27,14 @@ AppDispatcher.register(action => {
       _followedIds.push(action.follower.user_id);
       UserStore.emitChange();
     break;
+    case ActionTypes.REMOVED_ONE_FOLLOWER:
+      _followedIds.filter(f => {
+        return f !== action.user_id
+      });
+      UserStore.emitChange();
+      TweetStore.emitChange();
+    break;
+
 
     default:
   }

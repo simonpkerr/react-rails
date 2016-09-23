@@ -23,5 +23,14 @@ export default {
     $.post('/followers', { user_id: userId })
     .success(follower => ServerActions.receivedOneFollower(follower))
     .error(error => console.log(error));
+  },
+
+  unfollowUser (userId) {
+    $.ajax({
+      url: '/followers/' + userId,
+      type: 'DELETE'
+    })
+      .success(response => ServerActions.unfollowed(userId))
+      .error(error => console.log(error));
   }
 }

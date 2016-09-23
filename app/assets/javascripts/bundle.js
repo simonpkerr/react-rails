@@ -63,7 +63,7 @@
 	
 	var _Index2 = _interopRequireDefault(_Index);
 	
-	var _Follow = __webpack_require__(/*! ./components/Follow */ 186);
+	var _Follow = __webpack_require__(/*! ./components/Follow */ 250);
 	
 	var _Follow2 = _interopRequireDefault(_Follow);
 	
@@ -22041,8 +22041,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	_TweetActions2.default.getAllTweets();
-	
 	var getAppState = function getAppState() {
 	  return { tweetsList: _TweetStore2.default.getAll() };
 	};
@@ -22066,6 +22064,7 @@
 	  _createClass(Index, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
+	      _TweetActions2.default.getAllTweets();
 	      _TweetStore2.default.addChangeListener(this._onChange);
 	    }
 	  }, {
@@ -22259,6 +22258,16 @@
 	    }).error(function (error) {
 	      return console.log(error);
 	    });
+	  },
+	  unfollowUser: function unfollowUser(userId) {
+	    $.ajax({
+	      url: '/followers/' + userId,
+	      type: 'DELETE'
+	    }).success(function (response) {
+	      return _ServerActions2.default.unfollowed(userId);
+	    }).error(function (error) {
+	      return console.log(error);
+	    });
 	  }
 	};
 
@@ -22308,6 +22317,12 @@
 	    _dispatcher2.default.dispatch({
 	      actionType: _constants2.default.RECEIVED_ONE_FOLLOWER,
 	      follower: follower
+	    });
+	  },
+	  unfollowed: function unfollowed(userId) {
+	    _dispatcher2.default.dispatch({
+	      actionType: _constants2.default.REMOVED_ONE_FOLLOWER,
+	      user_id: userId
 	    });
 	  }
 	};
@@ -22667,7 +22682,8 @@
 	  RECEIVED_ONE_TWEET: 'RECEIVED_ONE_TWEET',
 	
 	  RECEIVED_USERS: 'RECEIVED_USERS',
-	  RECEIVED_ONE_FOLLOWER: 'RECEIVED_ONE_FOLLOWER'
+	  RECEIVED_ONE_FOLLOWER: 'RECEIVED_ONE_FOLLOWER',
+	  REMOVED_ONE_FOLLOWER: 'REMOVED_ONE_FOLLOWER'
 	};
 
 /***/ },
@@ -22742,7 +22758,7 @@
   \**************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -22753,6 +22769,10 @@
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
+	
+	var _UserActions = __webpack_require__(/*! ../actions/UserActions */ 252);
+	
+	var _UserActions2 = _interopRequireDefault(_UserActions);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22765,31 +22785,53 @@
 	var Tweet = function (_React$Component) {
 	  _inherits(Tweet, _React$Component);
 	
-	  function Tweet() {
+	  function Tweet(props) {
 	    _classCallCheck(this, Tweet);
 	
-	    return _possibleConstructorReturn(this, (Tweet.__proto__ || Object.getPrototypeOf(Tweet)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (Tweet.__proto__ || Object.getPrototypeOf(Tweet)).call(this, props));
+	
+	    _this.unfollow = _this.unfollow.bind(_this);
+	    _this.canUnfollow = _this.canUnfollow.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(Tweet, [{
-	    key: "render",
+	    key: 'unfollow',
+	    value: function unfollow(user_id) {
+	      _UserActions2.default.unfollowUser(user_id);
+	    }
+	  }, {
+	    key: 'canUnfollow',
+	    value: function canUnfollow() {
+	      if (!this.props.is_own_tweet) {
+	        return _react2.default.createElement(
+	          'a',
+	          { onClick: this.unfollow(this.props.user_id) },
+	          '(un-follow)'
+	        );
+	      }
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
-	        "li",
-	        { className: "collection-item avatar" },
-	        _react2.default.createElement("img", { className: "material-icons circle", src: this.props.gravatar }),
+	        'li',
+	        { className: 'collection-item avatar' },
+	        _react2.default.createElement('img', { className: 'material-icons circle', src: this.props.gravatar }),
 	        _react2.default.createElement(
-	          "span",
-	          { className: "title" },
-	          this.props.name
+	          'span',
+	          { className: 'title' },
+	          this.props.name,
+	          ' ',
+	          this.canUnfollow()
 	        ),
 	        _react2.default.createElement(
-	          "p",
+	          'p',
 	          null,
 	          this.props.formattedDate
 	        ),
 	        _react2.default.createElement(
-	          "p",
+	          'p',
 	          null,
 	          this.props.body
 	        )
@@ -22825,7 +22867,7 @@
 	
 	var _constants2 = _interopRequireDefault(_constants);
 	
-	var _AppEventEmitter2 = __webpack_require__(/*! ./AppEventEmitter */ 251);
+	var _AppEventEmitter2 = __webpack_require__(/*! ./AppEventEmitter */ 185);
 	
 	var _AppEventEmitter3 = _interopRequireDefault(_AppEventEmitter2);
 	
@@ -22882,6 +22924,62 @@
 
 /***/ },
 /* 185 */
+/*!********************************************************!*\
+  !*** ./app/assets/frontend/stores/AppEventEmitter.jsx ***!
+  \********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _events = __webpack_require__(/*! events */ 186);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var CHANGE_EVENT = "CHANGE";
+	
+	var AppEventEmitter = function (_EventEmitter) {
+	  _inherits(AppEventEmitter, _EventEmitter);
+	
+	  function AppEventEmitter() {
+	    _classCallCheck(this, AppEventEmitter);
+	
+	    return _possibleConstructorReturn(this, (AppEventEmitter.__proto__ || Object.getPrototypeOf(AppEventEmitter)).apply(this, arguments));
+	  }
+	
+	  _createClass(AppEventEmitter, [{
+	    key: "emitChange",
+	    value: function emitChange() {
+	      this.emit(CHANGE_EVENT);
+	    }
+	  }, {
+	    key: "addChangeListener",
+	    value: function addChangeListener(callback) {
+	      this.on(CHANGE_EVENT, callback);
+	    }
+	  }, {
+	    key: "removeChangeListener",
+	    value: function removeChangeListener(callback) {
+	      this.removeListener(CHANGE_EVENT, callback);
+	    }
+	  }]);
+	
+	  return AppEventEmitter;
+	}(_events.EventEmitter);
+	
+	exports.default = AppEventEmitter;
+
+/***/ },
+/* 186 */
 /*!****************************!*\
   !*** ./~/events/events.js ***!
   \****************************/
@@ -23190,146 +23288,6 @@
 	  return arg === void 0;
 	}
 
-
-/***/ },
-/* 186 */
-/*!***************************************************!*\
-  !*** ./app/assets/frontend/components/Follow.jsx ***!
-  \***************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _UserStore = __webpack_require__(/*! ../stores/UserStore */ 250);
-	
-	var _UserStore2 = _interopRequireDefault(_UserStore);
-	
-	var _UserActions = __webpack_require__(/*! ../actions/UserActions */ 252);
-	
-	var _UserActions2 = _interopRequireDefault(_UserActions);
-	
-	var _reactRouter = __webpack_require__(/*! react-router */ 187);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var getAppState = function getAppState() {
-	  return { users: _UserStore2.default.getAll() };
-	};
-	
-	var Follow = function (_React$Component) {
-	  _inherits(Follow, _React$Component);
-	
-	  function Follow(props) {
-	    _classCallCheck(this, Follow);
-	
-	    var _this = _possibleConstructorReturn(this, (Follow.__proto__ || Object.getPrototypeOf(Follow)).call(this, props));
-	
-	    _this.state = getAppState();
-	    _this._onChange = _this._onChange.bind(_this);
-	    return _this;
-	  }
-	
-	  // register with the store
-	
-	
-	  _createClass(Follow, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      _UserActions2.default.getAllUsers();
-	      _UserStore2.default.addChangeListener(this._onChange);
-	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      _UserStore2.default.removeChangeListener(this._onChange);
-	    }
-	
-	    // when data changes in the store, this callback will always be executed
-	
-	  }, {
-	    key: '_onChange',
-	    value: function _onChange() {
-	      this.setState(getAppState());
-	    }
-	  }, {
-	    key: 'followUser',
-	    value: function followUser(userId) {
-	      _UserActions2.default.followUser(userId);
-	    }
-	  }, {
-	    key: 'followClasses',
-	    value: function followClasses(isFollowing) {
-	      return "secondary-content btn-floating " + (isFollowing ? 'blue' : 'grey');
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this2 = this;
-	
-	      var users = this.state.users.map(function (u) {
-	        return _react2.default.createElement(
-	          'li',
-	          { key: u.id, className: 'collection-item avatar' },
-	          _react2.default.createElement('img', { src: u.gravatar, className: 'circle' }),
-	          _react2.default.createElement(
-	            'span',
-	            { className: 'title' },
-	            u.name
-	          ),
-	          _react2.default.createElement(
-	            'a',
-	            { className: _this2.followClasses(u.following),
-	              onClick: _this2.followUser.bind(_this2, u.id) },
-	            _react2.default.createElement(
-	              'i',
-	              { className: 'material-icons' },
-	              'person_pin'
-	            )
-	          )
-	        );
-	      });
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'h3',
-	          null,
-	          'Who to follow'
-	        ),
-	        _react2.default.createElement(
-	          'ul',
-	          { className: 'collection' },
-	          users
-	        ),
-	        _react2.default.createElement(
-	          _reactRouter.Link,
-	          { to: '/' },
-	          'Back'
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return Follow;
-	}(_react2.default.Component);
-	
-	exports.default = Follow;
 
 /***/ },
 /* 187 */
@@ -29174,6 +29132,146 @@
 
 /***/ },
 /* 250 */
+/*!***************************************************!*\
+  !*** ./app/assets/frontend/components/Follow.jsx ***!
+  \***************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _UserStore = __webpack_require__(/*! ../stores/UserStore */ 251);
+	
+	var _UserStore2 = _interopRequireDefault(_UserStore);
+	
+	var _UserActions = __webpack_require__(/*! ../actions/UserActions */ 252);
+	
+	var _UserActions2 = _interopRequireDefault(_UserActions);
+	
+	var _reactRouter = __webpack_require__(/*! react-router */ 187);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var getAppState = function getAppState() {
+	  return { users: _UserStore2.default.getAll() };
+	};
+	
+	var Follow = function (_React$Component) {
+	  _inherits(Follow, _React$Component);
+	
+	  function Follow(props) {
+	    _classCallCheck(this, Follow);
+	
+	    var _this = _possibleConstructorReturn(this, (Follow.__proto__ || Object.getPrototypeOf(Follow)).call(this, props));
+	
+	    _this.state = getAppState();
+	    _this._onChange = _this._onChange.bind(_this);
+	    return _this;
+	  }
+	
+	  // register with the store
+	
+	
+	  _createClass(Follow, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      _UserActions2.default.getAllUsers();
+	      _UserStore2.default.addChangeListener(this._onChange);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      _UserStore2.default.removeChangeListener(this._onChange);
+	    }
+	
+	    // when data changes in the store, this callback will always be executed
+	
+	  }, {
+	    key: '_onChange',
+	    value: function _onChange() {
+	      this.setState(getAppState());
+	    }
+	  }, {
+	    key: 'followUser',
+	    value: function followUser(userId) {
+	      _UserActions2.default.followUser(userId);
+	    }
+	  }, {
+	    key: 'followClasses',
+	    value: function followClasses(isFollowing) {
+	      return "secondary-content btn-floating " + (isFollowing ? 'blue' : 'grey');
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      var users = this.state.users.map(function (u) {
+	        return _react2.default.createElement(
+	          'li',
+	          { key: u.id, className: 'collection-item avatar' },
+	          _react2.default.createElement('img', { src: u.gravatar, className: 'circle' }),
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'title' },
+	            u.name
+	          ),
+	          _react2.default.createElement(
+	            'a',
+	            { className: _this2.followClasses(u.following),
+	              onClick: _this2.followUser.bind(_this2, u.id) },
+	            _react2.default.createElement(
+	              'i',
+	              { className: 'material-icons' },
+	              'person_pin'
+	            )
+	          )
+	        );
+	      });
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'h3',
+	          null,
+	          'Who to follow'
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          { className: 'collection' },
+	          users
+	        ),
+	        _react2.default.createElement(
+	          _reactRouter.Link,
+	          { to: '/' },
+	          'Back'
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return Follow;
+	}(_react2.default.Component);
+	
+	exports.default = Follow;
+
+/***/ },
+/* 251 */
 /*!**************************************************!*\
   !*** ./app/assets/frontend/stores/UserStore.jsx ***!
   \**************************************************/
@@ -29195,9 +29293,13 @@
 	
 	var _constants2 = _interopRequireDefault(_constants);
 	
-	var _AppEventEmitter2 = __webpack_require__(/*! ./AppEventEmitter */ 251);
+	var _AppEventEmitter2 = __webpack_require__(/*! ./AppEventEmitter */ 185);
 	
 	var _AppEventEmitter3 = _interopRequireDefault(_AppEventEmitter2);
+	
+	var _TweetStore = __webpack_require__(/*! ./TweetStore */ 184);
+	
+	var _TweetStore2 = _interopRequireDefault(_TweetStore);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29244,68 +29346,19 @@
 	      _followedIds.push(action.follower.user_id);
 	      UserStore.emitChange();
 	      break;
+	    case _constants2.default.REMOVED_ONE_FOLLOWER:
+	      _followedIds.filter(function (f) {
+	        return f !== action.user_id;
+	      });
+	      UserStore.emitChange();
+	      _TweetStore2.default.emitChange();
+	      break;
 	
 	    default:
 	  }
 	});
 	
 	exports.default = UserStore;
-
-/***/ },
-/* 251 */
-/*!********************************************************!*\
-  !*** ./app/assets/frontend/stores/AppEventEmitter.jsx ***!
-  \********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _events = __webpack_require__(/*! events */ 185);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var CHANGE_EVENT = "CHANGE";
-	
-	var AppEventEmitter = function (_EventEmitter) {
-	  _inherits(AppEventEmitter, _EventEmitter);
-	
-	  function AppEventEmitter() {
-	    _classCallCheck(this, AppEventEmitter);
-	
-	    return _possibleConstructorReturn(this, (AppEventEmitter.__proto__ || Object.getPrototypeOf(AppEventEmitter)).apply(this, arguments));
-	  }
-	
-	  _createClass(AppEventEmitter, [{
-	    key: "emitChange",
-	    value: function emitChange() {
-	      this.emit(CHANGE_EVENT);
-	    }
-	  }, {
-	    key: "addChangeListener",
-	    value: function addChangeListener(callback) {
-	      this.on(CHANGE_EVENT, callback);
-	    }
-	  }, {
-	    key: "removeChangeListener",
-	    value: function removeChangeListener(callback) {
-	      this.removeListener(CHANGE_EVENT, callback);
-	    }
-	  }]);
-	
-	  return AppEventEmitter;
-	}(_events.EventEmitter);
-	
-	exports.default = AppEventEmitter;
 
 /***/ },
 /* 252 */
@@ -29332,6 +29385,9 @@
 	  },
 	  followUser: function followUser(userId) {
 	    _API2.default.followUser(userId);
+	  },
+	  unfollowUser: function unfollowUser(userId) {
+	    _API2.default.unfollowUser(userId);
 	  }
 	};
 

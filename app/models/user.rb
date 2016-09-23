@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   end
 
   def as_json (options={})
-    { id: id, name: display_name, gravatar: gravatar }
+    { id: id, name: display_name, gravatar: gravatar  }
   end
 
   def gravatar
@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
     where(["id != :current_user_id and not exists(
       select 1 from followers
       where user_id = users.id
-      and followed_by = :current_user_id      
+      and followed_by = :current_user_id
       )", { current_user_id: current_user_id }]).all
   end
 

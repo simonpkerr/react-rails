@@ -1,6 +1,8 @@
 class TweetsController < ApplicationController
   def index
-    render json: Tweet.stream_for(current_user.id)
+    #render json: Tweet.stream_for(current_user.id)
+    render :json => Tweet.stream_for(current_user.id),
+      :current_user_id => current_user.id
   end
 
   def create
